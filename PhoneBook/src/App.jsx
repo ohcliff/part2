@@ -4,6 +4,7 @@ import Persons from './components/Persons'
 import Filter from './components/Filter'
 import axios from 'axios'
 import personService from './services/person'
+import Notifications from './components/Notifications'
 
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newSearch, setNewSearch] = useState('')
   const [filteredPersons, setFilter] = useState([])
+  const [notificationMessage, setNotificationMessage] = useState(null)
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -41,6 +43,8 @@ const App = () => {
             // Clear input fields
             setNewName('');
             setNewNumber('');
+            setNotificationMessage(`${changedPerson.name}'s number has been successfully changed!`);
+            setTimeout(() => {setNotificationMessage(null)},5000)
           })
           .catch(error => {
             // Handle error, if any
@@ -60,6 +64,8 @@ const App = () => {
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
+      setNotificationMessage(`Added ${returnedPerson.name}`);
+      setTimeout(() => {setNotificationMessage(null)},5000)
     })
     .catch(error => {
       console.error('Error creating person:', error);
@@ -88,6 +94,8 @@ const App = () => {
     const confirmDelete = window.confirm(`Delete ${persons[personIndex].name}?`)
     if (confirmDelete) {
       const updatedPersons = [...persons]
+      setNotificationMessage(`Deleted ${persons[personIndex].name}`);
+      setTimeout(() => {setNotificationMessage(null)},5000)
       // Remove the person from the copy of the array
       updatedPersons.splice(personIndex, 1);
   
@@ -98,9 +106,11 @@ const App = () => {
       personService.remove(id);
     }
     }
+
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notifications message={notificationMessage}/>
         <Filter 
         newSearch={newSearch}
         handleNewSearch={handleNewSearch}
